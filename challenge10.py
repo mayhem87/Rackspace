@@ -50,12 +50,18 @@ vip = clb.VirtualIP(type='PUBLIC')
 
 lb = clb.create(fqdn, port=80, protocol='HTTP', nodes=nlist, virtual_ips=[vip])
 
-lb.add_health_monitor(type="CONNECT", delay=10, timeout=10,
-        attemptsBeforeDeactivation=3)
+pu.wait_until(lb,'status', ['ACTIVE','ERROR'], interval = 5)
+
+lb.add_health_monitor(type="CONNECT", delay=10, timeout=10, attemptsBeforeDeactivation=3)
+
+time.sleep(10)
 
 lb.set_error_page(html)
 
 match = re.search(r'address=([\w.]+)', str(lb.virtual_ips))
+
+print 'Load Balancer created'
+print 'Load Balancer VIP: %s' % match.group(1)
 
 domain = fqdn.split('.')[-2] + '.' + fqdn.split('.')[-1]
 
@@ -75,6 +81,8 @@ domain.add_records(recs)
 cont = cf.create_container("Backup")
 obj = cf.store_object(cont, "LB_Error_Page.html", html, content_type='text/html')
 
+
+print 'Done'
 
 
 
