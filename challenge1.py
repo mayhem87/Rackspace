@@ -1,8 +1,15 @@
 #!/usr/bin/env python
 
+#Challenge 1: Write a script that builds three 512 MB Cloud Servers that 
+#following a similar naming convention. (ie., web1, web2, web3) and returns 
+#the IP and login credentials for each server. Use any image you want.
+
+#How to run
+#'./challenge1.py "server_name"'
+
 import pyrax
 import os
-import time
+import re
 from sys import argv
 #Location of creds
 creds = os.path.expanduser('~/.rackspace_cloud_credentials')
@@ -12,27 +19,24 @@ pyrax.set_credential_file(creds)
 
 
 cs = pyrax.cloudservers
-newservers = {}
-script, name, amount = argv
+newservers = []
+script, name = argv
 
 #creating servers
 print 'Here are your servers:'
-for i in range(1,int(amount)+1):
-	servername =  name+str(i)
-	linux = cs.images.list()[28]
-	ram = cs.flavors.list()[1]
-	srvr = cs.servers.create(servername, linux.id, ram.id)
-	newservers[servername] = srvr.id, srvr.adminPass
+for i in range(3):
+	servername =  name+str(i+1)
+	srvr = cs.servers.create(servername, '8bf22129-8483-462b-a020-1754ec822770', 3)
+	newservers.append(srvr)
 
 #displaying server info
-for i,y in newservers.iteritems():
-	info = cs.servers.get(y[0])
-	while len(info.networks) == 0:
-		time.sleep(30)
-		info = cs.servers.get(y[0])
-	print 'Name: ', i
-	print 'IP: ', info.networks['public']
-	print 'Admin Password: ', y[1]
+for servers in newservers:
+	pyrax.utils.wait_until(servers, 'status', ['ACTIVE', 'ERROR', 'UNKNOWN'], interval = 30)
+	servers.get()
+	ip = re.search(r'[\d.]+', str(servers.networks['public']))
+	print 'Name: ', servers.name
+	print 'IP: root@', ip.group()
+	print 'Admin Password: ', servers.adminPass
 	print '-'*10
 
 
