@@ -35,6 +35,7 @@ for server in completed:
 	print 'ID: %s' % server.id
 	print 'Networks: %s' % server.networks
 	print 'Password: %s' % server.adminPass
+	print '=' * 10
 		
 nlist = []
 
@@ -46,6 +47,7 @@ vip = clb.VirtualIP(type='PUBLIC')
 print 'Creating Load Balancer'
 
 lb = clb.create(lbname, port=80, protocol='HTTP', nodes=nlist, virtual_ips=[vip])
+lip = re.search(r'address=([\w.]+)', str(lb.virtual_ips))
 
 print 'Load Balancer Created'
-print 'Public IPs: ', lb.virtual_ips
+print 'Public IP: ', lip.group(1)
