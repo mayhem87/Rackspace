@@ -34,13 +34,10 @@ except pyrax.exceptions.FolderNotFound:
 
 while completed < size:
 	try:
+		print '{0:.0%}'.format(float(completed)/float(size))
 		completed = pyrax.cloudfiles.get_uploaded(key)
 		time.sleep(30)
-		print '{0:.0%}'.format(float(completed)/float(size))
 	except KeyboardInterrupt:
 		print 'Aborting upload'
 		cf.cancel_folder_upload(key)
 		exit(0)
-	except pyrax.exceptions.FolderNotFound:
-		print 'Invalid path' 
-		exit(0)	

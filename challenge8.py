@@ -5,6 +5,12 @@ import pyrax
 import sys
 import time
 
+#Challenge 8: Write a script that will create a static webpage served out of 
+#Cloud Files. The script must create a new container, cdn enable it, enable it 
+#to serve an index file, create an index file object, upload the object to the 
+#container, and create a CNAME record pointing to the CDN URL of the container.
+
+
 creds_file = os.path.expanduser("~/.rackspace_cloud_credentials")
 pyrax.set_credential_file(creds_file)
 cf = pyrax.cloudfiles

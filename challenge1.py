@@ -17,7 +17,6 @@ creds = os.path.expanduser('~/.rackspace_cloud_credentials')
 #Authentication
 pyrax.set_credential_file(creds)
 
-
 cs = pyrax.cloudservers
 newservers = []
 script, name = argv
@@ -31,12 +30,14 @@ for i in range(3):
 
 #displaying server info
 for servers in newservers:
-	pyrax.utils.wait_until(servers, 'status', ['ACTIVE', 'ERROR', 'UNKNOWN'], interval = 30)
+	pyrax.utils.wait_until(servers, 'status', ['ACTIVE', 'ERROR', 'UNKNOWN'], interval = 10, attempts=0)
 	servers.get()
-	ip = re.search(r'[\d.]+', str(servers.networks['public']))
+	ip = re.search(r'[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+', str(servers.networks['public']))
 	print 'Name: ', servers.name
-	print 'IP: root@', ip.group()
+	print 'IP: root@' + ip.group()
 	print 'Admin Password: ', servers.adminPass
 	print '-'*10
+
+
 
 

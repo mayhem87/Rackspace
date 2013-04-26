@@ -33,7 +33,7 @@ image_name = server.name + 'Image'
 img_id = server.create_image(image_name)
 print "Image '%s' is being created. Its ID is: %s" % (image_name, img_id)
 image = cs.images.get(img_id)
-pyrax.utils.wait_until(image,'status',['ACTIVE','ERROR','UNKNOWN'], interval=45)
+pyrax.utils.wait_until(image,'status',['ACTIVE','ERROR','UNKNOWN'], interval=20, attempts=0)
 image.get()
 print 'Image is done'
 
@@ -41,9 +41,9 @@ print 'Image is done'
 ns = cs.servers.create(newname,img_id,flavorid)
 
 #Giving info on new server
-pyrax.utils.wait_until(ns, 'status',['ACTIVE','ERROR','UNKNOWN'], interval=20)
+pyrax.utils.wait_until(ns, 'status',['ACTIVE','ERROR','UNKNOWN'], interval=10, attempts=0)
 ns.get()
-ip = re.search(r'[\d.]+', str(ns.networks['public']))
+ip = re.search(r'[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+', str(servers.networks['public']))
 print 'Here is your new server'
 print 'Name: ', newname
 print 'Admin Password: ', ns.adminPass
