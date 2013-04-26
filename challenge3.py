@@ -36,7 +36,7 @@ while completed < size:
 	try:
 		print '{0:.0%}'.format(float(completed)/float(size))
 		completed = pyrax.cloudfiles.get_uploaded(key)
-		time.sleep(30)
+		time.sleep(10)
 	except KeyboardInterrupt:
 		print 'Aborting upload'
 		cf.cancel_folder_upload(key)

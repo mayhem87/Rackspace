@@ -43,7 +43,7 @@ ns = cs.servers.create(newname,img_id,flavorid)
 #Giving info on new server
 pyrax.utils.wait_until(ns, 'status',['ACTIVE','ERROR','UNKNOWN'], interval=10, attempts=0)
 ns.get()
-ip = re.search(r'[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+', str(servers.networks['public']))
+ip = re.search(r'[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+', str(ns.networks['public']))
 print 'Here is your new server'
 print 'Name: ', newname
 print 'Admin Password: ', ns.adminPass
