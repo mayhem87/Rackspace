@@ -25,10 +25,17 @@ cf = pyrax.cloudfiles
 dns = pyrax.cloud_dns
 pu = pyrax.utils
 
-with open(os.path.expanduser("~/.ssh/id_rsa.pub")) as rsa:    
-	rsakey = rsa.read()
+#keep getting error 
+#raise exceptions.from_response(resp, body, url, method)
+#novaclient.exceptions.OverLimit: Personality file content too long (HTTP 413) 
+#(Request-ID: req-24afcd4c-f15f-4169-b4b4-5582ab2d7021
+#Commenting out ssh keys until error is fixed. Used to work now it doesnt.
 
-key = {'/root/.ssh/authorized_keys': rsakey}
+
+#with open(os.path.expanduser("~/.ssh/id_rsa.pub")) as rsa:    
+#	rsakey = rsa.read()
+
+#key = {'/root/.ssh/authorized_keys': rsakey}
 
 html = "<html><body>If you see this message please panic!</body></html>"
 
@@ -38,15 +45,17 @@ completed = []
 
 for d in range(2):
 	srv = 'srv' + str(d+1)
-	server = cs.servers.create(srv, '8bf22129-8483-462b-a020-1754ec822770', 3, files=key)
+	#server = cs.servers.create(srv, '8bf22129-8483-462b-a020-1754ec822770', 3, files = key)
+	server = cs.servers.create(srv, '8bf22129-8483-462b-a020-1754ec822770', 3)
 	completed.append(server)
 
 for server in completed:
 	pu.wait_until(server, 'status', ['ACTIVE', 'ERROR', 'UNKNOWN'], interval=20)
 	server.get()
+	ip = re.search(r'[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+', str(server.networks['public']))
 	print 'Server Completed'
 	print 'ID: %s' % server.id
-	print 'Networks: %s' % server.networks
+	print 'IP: root@' + ip.group()
 	print 'Password: %s' % server.adminPass
 	print '=' * 10
 
