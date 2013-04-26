@@ -50,7 +50,7 @@ for d in range(2):
 	completed.append(server)
 
 for server in completed:
-	pu.wait_until(server, 'status', ['ACTIVE', 'ERROR', 'UNKNOWN'], interval=20)
+	pu.wait_until(server, 'status', ['ACTIVE', 'ERROR', 'UNKNOWN'], interval=10, attempts = 0)
 	server.get()
 	ip = re.search(r'[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+', str(server.networks['public']))
 	print 'Server Completed'
