@@ -4,6 +4,7 @@ import os
 import pyrax
 import sys
 import time
+import re
 
 creds_file = os.path.expanduser("~/.rackspace_cloud_credentials")
 pyrax.set_credential_file(creds_file)
@@ -12,6 +13,20 @@ cs = pyrax.cloudservers
 clb = pyrax.cloud_loadbalancers
 dns = pyrax.cloud_dns
 cbs = pyrax.cloud_blockstorage
+
+#Challenge 11: Write an application that will:
+#Create an SSL terminated load balancer (Create self-signed certificate.)
+#Create a DNS record that should be pointed to the load balancer.
+#Create Three servers as nodes behind the LB.
+#     Each server should have a CBS volume attached to it. (Size and type are irrelevant.)
+#     All three servers should have a private Cloud Network shared between them.
+#     Login information to all three servers returned in a readable format as the result of the script, 
+#	  including connection information.
+
+#HOW TO RUN:
+#./challenge11.py 'fqdn'
+
+self, fqdn = sys.argv
 
 completed = []
 
@@ -82,6 +97,21 @@ pyrax.utils.wait_until(lb, 'status', ['ACTIVE','ERROR'], interval=10)
 
 lb.add_ssl_termination( securePort=443, enabled=True, secureTrafficOnly=False, certificate=cert, privatekey=key )
 
+match = re.search(r'address=([\w.]+)', str(lb.virtual_ips))
 
+domain = fqdn.split('.')[-2] + '.' + fqdn.split('.')[-1]
+
+recs = [{
+        "type": "A",
+        "name": fqdn,
+        "data": match.group(1),
+        "ttl": 6000,
+        }]
+
+for domains in dns.list():
+	if re.search(domain, str(domains)):
+		domain = domains
+
+domain.add_records(recs)
 
 
