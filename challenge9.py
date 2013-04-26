@@ -29,7 +29,9 @@ self, fqdn, img_id, flavor = sys.argv
 # 15GB Standard Instance 7
 # 30GB Standard Instance 8
 
-srv = cs.servers.create(fqdn, img_id, flavor)
+name = fqdn.split('.')[0]
+
+srv = cs.servers.create(name, img_id, flavor)
 
 pyrax.utils.wait_until(srv, 'status', ['ACTIVE', 'ERROR', 'UNKNOWN'], interval=20)
 

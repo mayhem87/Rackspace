@@ -25,10 +25,14 @@ cf = pyrax.cloudfiles
 dns = pyrax.cloud_dns
 pu = pyrax.utils
 
-with open(os.path.expanduser("~/.ssh/id_rsa.pub")) as rsa:    
-	rsakey = rsa.read()
+#with open(os.path.expanduser("~/.ssh/id_rsa.pub")) as rsa:    
+#	rsakey = rsa.read()
 
-files = {'/root/.ssh/authorized_keys': rsakey}
+file = open(os.path.expanduser("~/.ssh/id_rsa.pub"))
+rsakey = file.read()
+file.close()
+
+key = {'/root/.ssh/authorized_keys': rsakey}
 
 html = "<html><body>If you see this message please panic!</body></html>"
 
@@ -38,7 +42,8 @@ completed = []
 
 for d in range(2):
 	srv = 'srv' + str(d+1)
-	completed.append(cs.servers.create(srv, '8bf22129-8483-462b-a020-1754ec822770', 3, files=files))
+	server = cs.servers.create(srv, '8bf22129-8483-462b-a020-1754ec822770', 3, files=key)
+	completed.append(server)
 
 for server in completed:
 	pu.wait_until(server, 'status', ['ACTIVE', 'ERROR', 'UNKNOWN'], interval=20)
