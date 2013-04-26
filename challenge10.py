@@ -25,12 +25,8 @@ cf = pyrax.cloudfiles
 dns = pyrax.cloud_dns
 pu = pyrax.utils
 
-#with open(os.path.expanduser("~/.ssh/id_rsa.pub")) as rsa:    
-#	rsakey = rsa.read()
-
-file = open(os.path.expanduser("~/.ssh/id_rsa.pub"))
-rsakey = file.read()
-file.close()
+with open(os.path.expanduser("~/.ssh/id_rsa.pub")) as rsa:    
+	rsakey = rsa.read()
 
 key = {'/root/.ssh/authorized_keys': rsakey}
 
